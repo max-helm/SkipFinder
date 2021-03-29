@@ -13,6 +13,10 @@ namespace SkipFinder
     /// </summary>
     public class Program
     {
+        /// <summary>
+        /// Get a list of unskipped test from a file with all skipped tests, unskip them in corresponding packs, create a new file with skipped tests
+        /// </summary>
+        /// <param name="args">Paths to directories that contain test packs </param>
         static void Main(string[] args)
         {
             foreach (var path in args)
