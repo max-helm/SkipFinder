@@ -51,7 +51,7 @@ namespace SkipFinder
                         tests[tests.IndexOf(tests[i])] = tests[i].Split(new string[] { @"--\skip"}, StringSplitOptions.RemoveEmptyEntries).First();
                     }
                 }
-                Console.WriteLine($"Unskipping test {test} in a pack : {path}");
+                Console.WriteLine($"Unskipping test {test} in a pack: {path}");
                 File.WriteAllLines(path, tests);
             }
         }
