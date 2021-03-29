@@ -63,6 +63,7 @@ namespace SkipFinder
         /// <returns></returns>
         public static List<string> GetUnskippedTests(string path)
         {
+            Console.WriteLine($"Scanning {path}\\SkippedTests.txt for tests to unskip");
             List<string> input = new List<string>();
             if (!Directory.Exists(path) && !File.Exists($"{path}\\SkippedTests.txt"))
             {
@@ -70,7 +71,6 @@ namespace SkipFinder
                 return input;
             }
 
-            Console.WriteLine($"Scanning {path}\\SkippedTests.txt for tests to unskip");
             var skippedTests = from line in File.ReadAllLines($"{path}\\SkippedTests.txt")
                                 where !line.Contains(@"--\skip")
                                 select line;
@@ -78,6 +78,10 @@ namespace SkipFinder
             {
                 input.Add(test);
                 Console.WriteLine($"Test {test.Split(' ').First()} should be unskipped");
+            }
+            if (input.Count() == 0)
+            {
+                Console.WriteLine("No tests to unskip");
             }
             return input;
         } 
