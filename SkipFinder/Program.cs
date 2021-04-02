@@ -1,10 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace SkipFinder
 {
@@ -21,24 +18,40 @@ namespace SkipFinder
         {
             foreach (var path in args)
             {
-                List<string> input = GetUnskippedTests(path);
-                if (input.Count() > 0)
-                {
-                    UnskipTests(input);
-                }
-                List<string> output = new List<string>();
-                GetAllSkippedTestsInDirectory(output, path);
-                File.WriteAllLines($"{path}\\SkippedTests.txt", output);
+                GetUnskippedTestsFromFile(path);
+                UnskipTests();
+                GetAllSkippedTestsInDirectory(path);
+                SaveSkippedTestsToFile(path);
             }
+        }
+
+        public static List<string> TestsToUnskip { get; set; } = new List<string>();
+
+        public static List<string> SkippedTests { get; set; } = new List<string>();
+
+        /// <summary>
+        /// Saving skipped tests to file
+        /// </summary>
+        /// <param name="path"></param>
+        public static void SaveSkippedTestsToFile(string path)
+        {
+            var message = SkippedTests.Count() == 0 ? "No skipped tests to save - saving empty" : "Saving skipped tests to";
+            Console.WriteLine($"{message} file {path}\\SkippedTests.txt");
+            File.WriteAllLines($"{path}\\SkippedTests.txt", SkippedTests);
+            Console.WriteLine("File has been saved.");
         }
 
         /// <summary>
         /// Unskip tests
         /// </summary>
-        /// <param name="input"></param>
-        public static void UnskipTests(List<string> input)
+        public static void UnskipTests()
         {
-            foreach (var entry in input)
+            if (TestsToUnskip.Count() == 0)
+            {
+                return;
+            }
+
+            foreach (var entry in TestsToUnskip)
             {
                 var path = entry.Split(' ').Last();
                 var test = entry.Split(' ').First();
@@ -55,8 +68,9 @@ namespace SkipFinder
                         tests[i] = tests[i].Split(new string[] { @"--\skip"}, StringSplitOptions.RemoveEmptyEntries).First();
                     }
                 }
-                Console.WriteLine($"Unskipping test {test} in a pack: {path}");
+                Console.WriteLine($"Unskipping test: {test} in a pack: {path}");
                 File.WriteAllLines(path, tests);
+                Console.WriteLine($"Test: {test} has been succesfully unskipped and saved to file.");
             }
         }
 
@@ -64,15 +78,14 @@ namespace SkipFinder
         /// Get a list of tests to unskip
         /// </summary>
         /// <param name="path"></param>
-        /// <returns></returns>
-        public static List<string> GetUnskippedTests(string path)
+        public static void GetUnskippedTestsFromFile(string path)
         {
             Console.WriteLine($"Scanning {path}\\SkippedTests.txt for tests to unskip");
-            List<string> input = new List<string>();
+
             if (!Directory.Exists(path) && !File.Exists($"{path}\\SkippedTests.txt"))
             {
                 Console.WriteLine($"File {path + "\\SkippedTests.txt"} has not been found");
-                return input;
+                return;
             }
 
             var skippedTests = from line in File.ReadAllLines($"{path}\\SkippedTests.txt")
@@ -80,22 +93,20 @@ namespace SkipFinder
                                 select line;
             foreach (var test in skippedTests)
             {
-                input.Add(test);
-                Console.WriteLine($"Test {test.Split(' ').First()} should be unskipped");
+                TestsToUnskip.Add(test);
+                Console.WriteLine($"Test: {test.Split(' ').First()} should be unskipped");
             }
-            if (input.Count() == 0)
+            if (TestsToUnskip.Count() == 0)
             {
                 Console.WriteLine("No tests to unskip");
             }
-            return input;
         } 
 
         /// <summary>
         /// Get a list of skipped tests
         /// </summary>
-        /// <param name="output"></param>
         /// <param name="path"></param>
-        public static void GetAllSkippedTestsInDirectory(List<string> output, string path)
+        public static void GetAllSkippedTestsInDirectory(string path)
         {
             if (!Directory.Exists(path))
             {
@@ -113,14 +124,14 @@ namespace SkipFinder
                                 select line;
                     foreach (var test in tests)
                     {
-                        output.Add($"{test.Replace(" --\\relation", "")} Pack: {file}");
-                        Console.WriteLine($"Adding to SkippedTest.txt test {test.Replace(" --\\relation", "")} Pack: {file}");
+                        SkippedTests.Add($"{test.Replace(" --\\relation", "")} Pack: {file}");
+                        Console.WriteLine($"Adding to list Test: {test.Replace(" --\\relation", "")} Pack: {file}");
                     }
                 }
             }
             foreach (var dir in Directory.GetDirectories(path))
             {
-                GetAllSkippedTestsInDirectory(output, dir);
+                GetAllSkippedTestsInDirectory(dir);
             }
         }
     }
