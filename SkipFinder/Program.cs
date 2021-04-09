@@ -39,6 +39,7 @@ namespace SkipFinder
             Console.WriteLine($"{message} file {path}\\SkippedTests.txt");
             File.WriteAllLines($"{path}\\SkippedTests.txt", SkippedTests);
             Console.WriteLine("File has been saved.");
+            SkippedTests.Clear();
         }
 
         /// <summary>
@@ -113,8 +114,6 @@ namespace SkipFinder
                 Console.WriteLine($"Directory {path} doesn't exist");
                 return;
             }
-
-            SkippedTests.Clear();
 
             Console.WriteLine($"Scanning directory {path} for skipped tests");
             foreach (var file in Directory.GetFiles(path))
