@@ -114,6 +114,8 @@ namespace SkipFinder
                 return;
             }
 
+            SkippedTests.Clear();
+
             Console.WriteLine($"Scanning directory {path} for skipped tests");
             foreach (var file in Directory.GetFiles(path))
             {
