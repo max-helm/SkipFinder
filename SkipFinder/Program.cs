@@ -20,7 +20,9 @@ namespace SkipFinder
             {
                 GetUnskippedTestsFromFile(path);
                 UnskipTests();
+                Console.WriteLine("----------Search for skipped tests----------");
                 GetAllSkippedTestsInDirectory(path);
+                Console.WriteLine("\r\nSearch is over\r\n---------\r\n");
                 SaveSkippedTestsToFile(path);
             }
         }
@@ -35,10 +37,11 @@ namespace SkipFinder
         /// <param name="path"></param>
         public static void SaveSkippedTestsToFile(string path)
         {
+            Console.WriteLine("----------Saving tests to file----------\r\n");
             var message = SkippedTests.Count() == 0 ? "No skipped tests to save - saving empty" : "Saving skipped tests to";
             Console.WriteLine($"{message} file {path}\\SkippedTests.txt");
             File.WriteAllLines($"{path}\\SkippedTests.txt", SkippedTests);
-            Console.WriteLine("File has been saved.");
+            Console.WriteLine("\r\n----------File has been saved----------\r\n");
             SkippedTests.Clear();
         }
 
@@ -73,6 +76,7 @@ namespace SkipFinder
                 File.WriteAllLines(path, tests);
                 Console.WriteLine($"Test: {test} has been succesfully unskipped and saved to file.");
             }
+            Console.WriteLine("\r\nUnskip over\r\n---------\r\n");
         }
 
         /// <summary>
@@ -81,7 +85,8 @@ namespace SkipFinder
         /// <param name="path"></param>
         public static void GetUnskippedTestsFromFile(string path)
         {
-            Console.WriteLine($"Scanning {path}\\SkippedTests.txt for tests to unskip");
+            Console.WriteLine("\r\n----------Performing unskip----------");
+            Console.WriteLine($"\r\nScanning {path}\\SkippedTests.txt for tests to unskip\r\n");
 
             if (!Directory.Exists(path) && !File.Exists($"{path}\\SkippedTests.txt"))
             {
@@ -99,7 +104,7 @@ namespace SkipFinder
             }
             if (TestsToUnskip.Count() == 0)
             {
-                Console.WriteLine("No tests to unskip");
+                Console.WriteLine("No tests to unskip\r\n\r\n----------Unskip over----------\r\n");
             }
         } 
 
@@ -115,7 +120,7 @@ namespace SkipFinder
                 return;
             }
 
-            Console.WriteLine($"Scanning directory {path} for skipped tests");
+            Console.WriteLine($"\r\nScanning directory {path} for skipped tests\r\n");
             foreach (var file in Directory.GetFiles(path))
             {
                 if (!file.Contains("SkippedTests"))
@@ -134,6 +139,7 @@ namespace SkipFinder
             {
                 GetAllSkippedTestsInDirectory(dir);
             }
+           
         }
     }
 }
