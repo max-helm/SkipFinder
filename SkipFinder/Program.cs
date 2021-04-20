@@ -22,7 +22,7 @@ namespace SkipFinder
                 UnskipTests();
                 Console.WriteLine("----------Search for skipped tests----------");
                 GetAllSkippedTestsInDirectory(path);
-                Console.WriteLine("\r\nSearch is over\r\n---------\r\n");
+                Console.WriteLine("\r\n----------Search is over---------\r\n");
                 SaveSkippedTestsToFile(path);
             }
         }
