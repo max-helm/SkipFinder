@@ -40,7 +40,7 @@ namespace SkipFinder
             Console.WriteLine("----------Saving tests to file----------\r\n");
             var message = SkippedTests.Count() == 0 ? "No skipped tests to save - saving empty" : "Saving skipped tests to";
             Console.WriteLine($"{message} file {path}\\SkippedTests.txt");
-            File.WriteAllLines($"{path}\\SkippedTests.txt", SkippedTests);
+            File.WriteAllLines($"{path}\\SkippedTests.txt", SkippedTests, System.Text.Encoding.UTF8);
             Console.WriteLine("\r\n----------File has been saved----------\r\n");
             SkippedTests.Clear();
         }
